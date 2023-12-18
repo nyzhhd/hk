@@ -156,6 +156,7 @@
     <ClCompile Include="detect_opencv.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="HK_camera.cpp" />
+    <ClCompile Include="ytkz.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HK_camera.h" />
