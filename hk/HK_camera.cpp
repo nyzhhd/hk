@@ -3,6 +3,9 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <opencv2\imgproc\types_c.h>
+#include <stdio.h>
+#include "Windows.h"
+#include <time.h>
 
 
 using namespace std;
@@ -10,18 +13,23 @@ using namespace cv;
 
 // 全局变量
 CascadeClassifier faceclassifier;//检测人脸的分类器
+LONG UserID;
+int iChannel = 1;//设备通道号
+
+// 全局变量，用于存储脸部中心点的历史位置
+std::vector<Point> faceCenters;
 
 //全局变量
 LONG g_nPort;
 Mat g_BGRImage;
 
 //数据解码回调函数，
-//功能：将YV_12格式的视频数据流转码为可供opencv处理的BGR类型的图片数据，并实时显示。
+//功能：将YV_12格式的视频数据流转码为可供opencv处理的BGR类型的图片数据，并实时显示。  控制摄像头跟踪face目标框
 void CALLBACK DecCBFun(long nPort, char* pBuf, long nSize, FRAME_INFO* pFrameInfo, long nUser, long nReserved2)
 {
 	if (pFrameInfo->nType == T_YV12)
 	{
-		std::cout << "the frame infomation is T_YV12" << std::endl;
+		std::cout << "the frame information is T_YV12" << std::endl;
 		if (g_BGRImage.empty())
 		{
 			g_BGRImage.create(pFrameInfo->nHeight, pFrameInfo->nWidth, CV_8UC3);
@@ -29,38 +37,109 @@ void CALLBACK DecCBFun(long nPort, char* pBuf, long nSize, FRAME_INFO* pFrameInf
 		Mat YUVImage(pFrameInfo->nHeight + pFrameInfo->nHeight / 2, pFrameInfo->nWidth, CV_8UC1, (unsigned char*)pBuf);
 		cvtColor(YUVImage, g_BGRImage, COLOR_YUV2BGR_YV12);
 
-		Mat frame, gray, small;//视频中的帧，灰度图，缩略图
-		vector<Rect> faceRect;//存储检测矩形
-		double scale = 2.0;//缩放比例（缩小图像是为了减小运算量）
+		Mat frame, gray, small;
+		vector<Rect> faceRect;
+		double scale = 2.0; // 缩放比例
+
 		frame = g_BGRImage;
-		cvtColor(frame, gray, CV_BGR2GRAY);//转为灰度图
-		equalizeHist(gray, gray);//直方图均衡化
-		resize(gray, small, Size(), 1.0 / scale, 1.0 / scale, INTER_LINEAR_EXACT);//缩小图像（为了提高速度）
+		cvtColor(frame, gray, CV_BGR2GRAY);
+		equalizeHist(gray, gray);
+		resize(gray, small, Size(), 1.0 / scale, 1.0 / scale, INTER_LINEAR_EXACT);
 
 		faceclassifier.detectMultiScale(small, faceRect, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
 
-
-		for (size_t i = 0; i < faceRect.size(); i++)//绘制所有检测到的目标
+		// 查找最大的人脸框
+		Rect largestFace;
+		int maxArea = 0;
+		for (size_t i = 0; i < faceRect.size(); i++)
 		{
 			Rect r = faceRect[i];
-			//参数：图像，顶点1，顶点2，颜色，线条粗细，线条类型
-			rectangle(frame, Point(r.x, r.y)*scale, Point(r.x + r.width, r.y + r.height)*scale, Scalar(0, 255, 0), 2, 8);
-			// Add a label to the detected face
-			putText(frame, "face", Point(r.x * scale, r.y * scale - 10), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0), 2);
+			int area = r.width * r.height;
+			if (area > maxArea)
+			{
+				maxArea = area;
+				largestFace = r;
+			}
 		}
 
+		if (maxArea > 0) // 如果检测到了人脸
+		{
+			// 绘制最大的人脸框
+			rectangle(frame, Point(largestFace.x, largestFace.y) * scale, Point(largestFace.x + largestFace.width, largestFace.y + largestFace.height) * scale, Scalar(0, 255, 0), 2, 8);
+			putText(frame, "face", Point(largestFace.x * scale, largestFace.y * scale - 10), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0), 2);
 
+			// 计算人脸中心点和图像中心点
+			Point faceCenter(largestFace.x + largestFace.width / 2, largestFace.y + largestFace.height / 2);
+			faceCenter *= scale;
 
+			// 将新的中心点添加到历史位置列表中
+			faceCenters.push_back(faceCenter);
 
+			// 绘制人脸中心点的历史轨迹
+			for (size_t i = 1; i < faceCenters.size(); i++)
+			{
+				line(frame, faceCenters[i - 1], faceCenters[i], Scalar(255, 0, 0), 2);
+			}
 
-		g_BGRImage= frame ;
+			Point imageCenter(frame.cols / 2, frame.rows / 2);
 
+			// 控制摄像头移动
+			bool needToMove = false;
+			int command = 0;
+			int deltaX = abs(faceCenter.x - imageCenter.x);
+			int deltaY = abs(faceCenter.y - imageCenter.y);
+			const int centerTolerance = 30;
 
+			if (deltaX > centerTolerance || deltaY > centerTolerance)
+			{
+				needToMove = true;
+				// 根据X方向偏差选择命令
+				if (deltaX > centerTolerance)
+				{
+					command = (faceCenter.x < imageCenter.x) ? PAN_LEFT : PAN_RIGHT;
+				}
+				// 根据Y方向偏差选择命令
+				if (deltaY > centerTolerance)
+				{
+					if (faceCenter.y < imageCenter.y)
+					{
+						command = (command == PAN_LEFT) ? UP_LEFT : (command == PAN_RIGHT) ? UP_RIGHT : TILT_UP;
+					}
+					else
+					{
+						command = (command == PAN_LEFT) ? DOWN_LEFT : (command == PAN_RIGHT) ? DOWN_RIGHT : TILT_DOWN;
+					}
+				}
+			}
+
+			if (needToMove)
+			{
+				DWORD dwStop = 0;
+				NET_DVR_PTZControl_Other(UserID, iChannel, command, dwStop);
+				Sleep(std::max(deltaX, deltaY) / 10); // Sleep时间与偏差成比例
+				dwStop = 1;
+				NET_DVR_PTZControl_Other(UserID, iChannel, command, dwStop);
+			}
+		}
+
+		g_BGRImage = frame;
 		imshow("RGBImage1", g_BGRImage);
 		waitKey(15);
-		YUVImage.~Mat();
+		YUVImage.release();
 	}
 }
+
+
+
+//TILT_UP            21    /* 云台以SS的速度上仰 */
+//TILT_DOWN        22    /* 云台以SS的速度下俯 */
+//PAN_LEFT        23    /* 云台以SS的速度左转 */
+//PAN_RIGHT        24    /* 云台以SS的速度右转 */
+//UP_LEFT            25    /* 云台以SS的速度上仰和左转 */
+//UP_RIGHT        26    /* 云台以SS的速度上仰和右转 */
+//DOWN_LEFT        27    /* 云台以SS的速度下俯和左转 */
+//DOWN_RIGHT        28    /* 云台以SS的速度下俯和右转 */
+//PAN_AUTO        29    /* 云台以SS的速度左右自动扫描 */
 
 //实时视频码流数据获取 回调函数
 void CALLBACK g_RealDataCallBack_V30(LONG lPlayHandle, DWORD dwDataType, BYTE *pBuffer, DWORD dwBufSize, void* pUser)
@@ -117,8 +196,8 @@ bool HK_camera::Login(const char* sDeviceAddress,const char* sUserName,const cha
 	pLoginInfo.wPort = wPort;
 
 	lUserID = NET_DVR_Login_V40(&pLoginInfo, &lpDeviceInfo);
+	UserID = lUserID;
 	faceclassifier.load("D:\\adavance\\opencv识别模型\\haarcascade_frontalface_alt2.xml");//haarcascade_upperbody
-
 
 	if (lUserID < 0)
 	{

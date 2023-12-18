@@ -27,6 +27,9 @@
     <ClCompile Include="detect_opencv.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ytkz.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HK_camera.h">

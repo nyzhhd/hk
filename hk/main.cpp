@@ -11,7 +11,7 @@ int main()
 	if (camera.Init())
 	{
 		cout << "init success" << endl;
-		if (camera.Login("169.254.25.95", "admin", "gyb18800", 8000))//用户名以及密码，根据此系列博客一中的方法查看或设置
+		if (camera.Login("169.254.104.194", "admin", "gyb18800", 8000))//用户名以及密码，根据此系列博客一中的方法查看或设置
 		{
 			cout << "login successfully" << endl;
 			camera.show();
