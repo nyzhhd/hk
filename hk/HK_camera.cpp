@@ -49,6 +49,10 @@ void CALLBACK DecCBFun(long nPort, char* pBuf, long nSize, FRAME_INFO* pFrameInf
 			putText(frame, "face", Point(r.x * scale, r.y * scale - 10), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0), 2);
 		}
 
+
+
+
+
 		g_BGRImage= frame ;
 
 
