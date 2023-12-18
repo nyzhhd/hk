@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <LibraryPath>D:\研\研究生学习\课程学习\20231211实验课\CH-HCNetSDKV6.1.9.48_build20230410_win64_20231208134906\me\hk\3rd_x64\opencv-x64\include\opencv2;D:\研\研究生学习\课程学习\20231211实验课\CH-HCNetSDKV6.1.9.48_build20230410_win64_20231208134906\me\hk\3rd_x64\opencv-x64\include;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>../3rd_x64/HC_vision_SDK_x64/include;../3rd_x64/opencv-x64/include;../3rd_x64/opencv-x64/include/opencv;D:\研\研究生学习\课程学习\20231211实验课\CH-HCNetSDKV6.1.9.48_build20230410_win64_20231208134906\me\hk\3rd_x64\onnxruntime-win-x64-1.16.3\include;../3rd_x64/opencv-x64/include/opencv2</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>../3rd_x64/HC_vision_SDK_x64/lib/HCCore.lib;
+../3rd_x64/HC_vision_SDK_x64/lib/HCNetSDK.lib;
+../3rd_x64/HC_vision_SDK_x64/lib/PlayCtrl.lib;
+../3rd_x64/HC_vision_SDK_x64/lib/GdiPlus.lib;
+../3rd_x64/HC_vision_SDK_x64/lib/HCNetSDKCom/HCAlarm.lib;
+../3rd_x64/HC_vision_SDK_x64/lib/HCNetSDKCom/HCGeneralCfgMgr.lib;
+../3rd_x64/HC_vision_SDK_x64/lib/HCNetSDKCom/HCPreview.lib;../3rd_x64\opencv-x64\lib\lib\opencv_world411.lib;../3rd_x64\opencv-x64\lib\lib\opencv_world411d.lib;onnxruntime.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\研\研究生学习\课程学习\20231211实验课\CH-HCNetSDKV6.1.9.48_build20230410_win64_20231208134906\me\hk\3rd_x64\onnxruntime-win-x64-1.16.3\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

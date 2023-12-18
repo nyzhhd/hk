@@ -1,0 +1,16 @@
+﻿  detect_opencv.cpp
+d:\研\研究生学习\课程学习\20231211实验课\ch-hcnetsdkv6.1.9.48_build20230410_win64_20231208134906\me\hk\hk\detect_opencv.cpp(53): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+d:\研\研究生学习\课程学习\20231211实验课\ch-hcnetsdkv6.1.9.48_build20230410_win64_20231208134906\me\hk\hk\detect_opencv.cpp(57): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+d:\研\研究生学习\课程学习\20231211实验课\ch-hcnetsdkv6.1.9.48_build20230410_win64_20231208134906\me\hk\hk\detect_opencv.cpp(78): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+d:\研\研究生学习\课程学习\20231211实验课\ch-hcnetsdkv6.1.9.48_build20230410_win64_20231208134906\me\hk\hk\detect_opencv.cpp(132): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\研\研究生学习\课程学习\20231211实验课\ch-hcnetsdkv6.1.9.48_build20230410_win64_20231208134906\me\hk\hk\detect_opencv.cpp(133): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\研\研究生学习\课程学习\20231211实验课\ch-hcnetsdkv6.1.9.48_build20230410_win64_20231208134906\me\hk\hk\detect_opencv.cpp(134): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\研\研究生学习\课程学习\20231211实验课\ch-hcnetsdkv6.1.9.48_build20230410_win64_20231208134906\me\hk\hk\detect_opencv.cpp(135): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\研\研究生学习\课程学习\20231211实验课\ch-hcnetsdkv6.1.9.48_build20230410_win64_20231208134906\me\hk\hk\detect_opencv.cpp(167): warning C4305: “初始化”: 从“double”到“float”截断
+  main.cpp
+  正在生成代码
+  97 of 395 functions (24.6%) were compiled, the rest were copied from previous compilation.
+    4 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  已完成代码的生成
+  hk.vcxproj -> D:\研\研究生学习\课程学习\20231211实验课\CH-HCNetSDKV6.1.9.48_build20230410_win64_20231208134906\me\hk\x64\Release\hk.exe
