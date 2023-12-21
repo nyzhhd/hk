@@ -81,9 +81,22 @@ void CALLBACK DecCBFun(long nPort, char* pBuf, long nSize, FRAME_INFO* pFrameInf
 				line(frame, faceCenters[i - 1], faceCenters[i], Scalar(255, 0, 0), 2);
 			}
 
+
+
+
+
 			Point imageCenter(frame.cols / 2, frame.rows / 2);
 
 			// 控制摄像头移动
+			//TILT_UP            21    /* 云台以SS的速度上仰 */
+			//TILT_DOWN        22    /* 云台以SS的速度下俯 */
+			//PAN_LEFT        23    /* 云台以SS的速度左转 */
+			//PAN_RIGHT        24    /* 云台以SS的速度右转 */
+			//UP_LEFT            25    /* 云台以SS的速度上仰和左转 */
+			//UP_RIGHT        26    /* 云台以SS的速度上仰和右转 */
+			//DOWN_LEFT        27    /* 云台以SS的速度下俯和左转 */
+			//DOWN_RIGHT        28    /* 云台以SS的速度下俯和右转 */
+			//PAN_AUTO        29    /* 云台以SS的速度左右自动扫描 */
 			bool needToMove = false;
 			int command = 0;
 			int deltaX = abs(faceCenter.x - imageCenter.x);
@@ -131,15 +144,7 @@ void CALLBACK DecCBFun(long nPort, char* pBuf, long nSize, FRAME_INFO* pFrameInf
 
 
 
-//TILT_UP            21    /* 云台以SS的速度上仰 */
-//TILT_DOWN        22    /* 云台以SS的速度下俯 */
-//PAN_LEFT        23    /* 云台以SS的速度左转 */
-//PAN_RIGHT        24    /* 云台以SS的速度右转 */
-//UP_LEFT            25    /* 云台以SS的速度上仰和左转 */
-//UP_RIGHT        26    /* 云台以SS的速度上仰和右转 */
-//DOWN_LEFT        27    /* 云台以SS的速度下俯和左转 */
-//DOWN_RIGHT        28    /* 云台以SS的速度下俯和右转 */
-//PAN_AUTO        29    /* 云台以SS的速度左右自动扫描 */
+
 
 //实时视频码流数据获取 回调函数
 void CALLBACK g_RealDataCallBack_V30(LONG lPlayHandle, DWORD dwDataType, BYTE *pBuffer, DWORD dwBufSize, void* pUser)
